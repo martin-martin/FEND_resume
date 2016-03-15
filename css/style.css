@@ -212,3 +212,9 @@ span {
     display: block;
   }
 }
+
+/*########################*/
+
+.project-entry {
+  max-width: 200px;
+}

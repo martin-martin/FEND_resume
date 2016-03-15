@@ -11,12 +11,14 @@ var bio = {
 		"email" : "breuss.martin@gmail.com",
 		"twitter" : "",
 		"github" : "martin-martin",
-		"blog" : "notesinnature",
+		"blog" : "statsinnature",
 		"location" : "Mountain View, CA, USA"
 	},
 	"skills" : [
-		"next",
-		"not the right moment to write this"
+		"maybe nice",
+		"giving feedback",
+		"noticing things",
+		"..."
 	],
 	"bioPic" : "https://avatars2.githubusercontent.com/u/12371494?v=3&u=ade0bf6c16ed2313397019c7a5a9d0d8eedff245&s=140",
 	"welcomeMsg" : "..."
@@ -152,22 +154,45 @@ var editAndInclude = function(initialVar, frame, htmlId) {
 	$(htmlId).append(formattedVar);
 };
 
+var concatenate = function(initialVar_1, initialVar_2, frame_1, frame_2) {
+	var formatted_1 = frame_1.replace("%data%", initialVar_1);
+	var formatted_2 = frame_2.replace("%data%", initialVar_2);
+	var one_and_two = formatted_1 + formatted_2;
+	return one_and_two;
+}
+
 var gotJob = function(jobObjPos) {
 	$("#workExperience").append(HTMLworkStart);
-	editAndInclude(work.jobs[jobObjPos].employer, HTMLworkEmployer, "#workExperience");
-	editAndInclude(work.jobs[jobObjPos].title, HTMLworkTitle, "#workExperience");
-	editAndInclude(work.jobs[jobObjPos].dates, HTMLworkDates, "#workExperience");
-	editAndInclude(work.jobs[jobObjPos].location, HTMLworkLocation, "#workExperience");
-	editAndInclude(work.jobs[jobObjPos].description, HTMLworkDescription, "#workExperience");
+	var employer = work.jobs[jobObjPos].employer;
+	var title = work.jobs[jobObjPos].title;
+	$(".work-entry:last").append(concatenate(employer, title, HTMLworkEmployer, HTMLworkTitle));
+	editAndInclude(work.jobs[jobObjPos].dates, HTMLworkDates, ".work-entry:last");
+	editAndInclude(work.jobs[jobObjPos].location, HTMLworkLocation, ".work-entry:last");
+	editAndInclude(work.jobs[jobObjPos].description, HTMLworkDescription, ".work-entry:last");
 };
 
 var didProject = function(projObjPos) {
 	$("#projects").append(HTMLprojectStart);
-	editAndInclude(projects.projects[projObjPos].title, HTMLprojectTitle, "#projects");
-	editAndInclude(projects.projects[projObjPos].dates, HTMLprojectDates, "#projects");
-	editAndInclude(projects.projects[projObjPos].description, HTMLprojectDescription, "#projects");
-	editAndInclude(projects.projects[projObjPos].image, HTMLprojectImage, "#projects");
-	editAndInclude(projects.projects[projObjPos].url, HTMLprojectUrl, "#projects");
+	editAndInclude(projects.projects[projObjPos].title, HTMLprojectTitle, ".project-entry:last");
+	editAndInclude(projects.projects[projObjPos].dates, HTMLprojectDates, ".project-entry:last");
+	editAndInclude(projects.projects[projObjPos].description, HTMLprojectDescription, ".project-entry:last");
+	editAndInclude(projects.projects[projObjPos].image, HTMLprojectImage, ".project-entry:last");
+	editAndInclude(projects.projects[projObjPos].url, HTMLprojectUrl, ".project-entry:last");
+};
+
+// collecting click locations
+$(document).click(function(loc) {
+	var x = loc.pageX;
+	var y = loc.pageY;
+  	return logClicks(x,y);
+});
+
+// going international with names
+function inName(name) {
+	name = name.trim().split(" ");
+	name[0] = name[0].slice(0,1).toUpperCase() + name[0].slice(1).toLowerCase();
+	name[1] = name[1].toUpperCase();
+	return name.join(" ");
 };
 
 //// calling the function on my elements
@@ -176,11 +201,13 @@ editAndInclude(bio.bioPic, HTMLbioPic, "#header");
 editAndInclude(bio.name, HTMLheaderName, "#header");
 editAndInclude(bio.role, HTMLheaderRole, "#header");
 editAndInclude(bio.welcomeMsg, HTMLwelcomeMsg, "#header");
-// adding skills
-$("#header").append(HTMLskillsStart);
-for (skill in bio.skills){
-	editAndInclude(bio.skills[skill], HTMLskills, "#skills");
-	};
+// adding skills (if there are any)
+if (bio.skills != []) {
+	$("#header").append(HTMLskillsStart);
+	for (skill in bio.skills){
+		editAndInclude(bio.skills[skill], HTMLskills, "#skills");
+		};
+}
 // adding contacts at the top
 editAndInclude(bio.contact.mobile, HTMLmobile, "#topContacts");
 editAndInclude(bio.contact.email, HTMLemail, "#topContacts");
@@ -199,9 +226,15 @@ for (project in projects.projects) {
 
 // adding MOOC objects
 
+// adding the internationalize button
+$('body').append(internationalizeButton);
+
 // adding contacts at the bottom
 editAndInclude(bio.contact.mobile, HTMLmobile, "#footerContacts");
 editAndInclude(bio.contact.email, HTMLemail, "#footerContacts");
 editAndInclude(bio.contact.github, HTMLgithub, "#footerContacts");
 editAndInclude(bio.contact.blog, HTMLblog, "#footerContacts");
 editAndInclude(bio.contact.location, HTMLlocation, "#footerContacts");
+
+// adding a map
+$('map-div').append(googleMap);
